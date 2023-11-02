@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход</title>
+    <style>
+        body {
+            background-color: black;
+            color: red;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Lato', sans-serif;
+        }
+        .login-form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        .login-form h1 {
+            text-align: center;
+            font-family: 'Lato', sans-serif;
+        }
+        .login-form form {
+            display: flex;
+            flex-direction: column;
+        }
+        .login-form input[type="text"],
+        .login-form input[type="password"] {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid gray;
+            font-family: 'Lato', sans-serif;
+        }
+        .login-form button {
+            padding: 10px;
+            border-radius: 5px;
+            background-color: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-family: 'Lato', sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-form">
+        <h1>Вход</h1>
+        <form action="{% url 'login' %}"  method="POST">
+            {% csrf_token %}
+            {{ form.username.label_tag }}
+            {{ form.username }}
+            {{ form.password.label_tag }}
+            {{ form.password }}
+            {{ form.password2.label_tag }}
+            {{ form.password2 }}
+            <button type="submit">Войти</button>
+        </form>
+    </div>
+</body>
+</html>
+
