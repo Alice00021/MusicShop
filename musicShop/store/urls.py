@@ -9,10 +9,7 @@ urlpatterns =[
     path('update_item/', views.updateItem, name="update_item"),
     path('process_order/', views.processOrder, name="process_order"),
     path('login/', views.login_view, name="login"),
+    path('logout/', views.logout_view, name="logout"),
     path('register/', views.registerPage, name="register"),
   
-    
-
-
-
 ]

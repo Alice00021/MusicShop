@@ -8,9 +8,12 @@ import datetime
 from django.contrib.auth import authenticate, login
 from .forms import LoginForm
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, auth
 
 from django.contrib.auth.forms import UserCreationForm
+
+from django.contrib import messages
+from django.shortcuts import render, redirect
 
 
 
@@ -138,7 +141,7 @@ def processOrder(request):
 from django.contrib.auth import login
 
 def login_view(request):
-    if request.method == 'POST':
+    """ if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data['username']
@@ -147,7 +150,7 @@ def login_view(request):
             if user is not None:
                 # Проверяем, есть ли пользователь в модели User
                 if not User.objects.filter(username=username).exists():
-                    user = form.save()  # Создаем новую запись в модели User
+                    user = form.save(commit=False)  # Создаем новую запись в модели User
                     user.set_password(password)  # Сохраняем пароль пользователя
                     user.save()
                 login(request, user)
@@ -158,10 +161,27 @@ def login_view(request):
         form = LoginForm()
     
     return render(request, 'store/login.html', {'form': form})
+ """
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
 
+        user = auth.authenticate(username=username, password=password)
+
+        if user is not None:
+            auth.login(request, user)
+            return redirect('store')
+        else:
+            messages.info(request, 'Invalid Username or Password')
+            return redirect('login')
+
+
+
+    else:
+        return render(request, 'store/login.html')
 
 def registerPage(request):
-    form=UserCreationForm()
+    """ form=UserCreationForm()
 
     if request.method =='POST':
         form=UserCreationForm(request.POST)
@@ -170,11 +190,44 @@ def registerPage(request):
             return redirect('')
         
     context={'form': form}
-    return render(request, 'store/register.html', context)
+    return render(request, 'store/register.html', context) """
 
-""" def loginPage(request):
-    form=UserCreationForm()
-    context={'form': form}
-    return render(request, 'store/login.html', context)
 
- """
+    if request.method == 'POST':
+        first_name = request.POST['first_name']
+        last_name = request.POST['last_name']
+        username = request.POST['username']
+        email = request.POST['email']
+        password = request.POST['password']
+        confirm_password = request.POST['confirm_password']
+
+        if password==confirm_password:
+            if User.objects.filter(username=username).exists():
+                messages.info(request, 'Username is already taken')
+                return redirect(store)
+            elif User.objects.filter(email=email).exists():
+                messages.info(request, 'Email is already taken')
+                return redirect(store)
+            else:
+                user = User.objects.create_user(username=username, password=password, 
+                                        email=email, first_name=first_name, last_name=last_name)
+                user.save()
+                
+                return redirect('login')
+
+
+        else:
+            messages.info(request, 'Both passwords are not matching')
+            return redirect(store)
+            
+
+    else:
+        return render(request, 'store/register.html')
+    
+
+
+def logout_view(request):
+    auth.logout(request)
+    return redirect('store')
+
+
